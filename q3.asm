@@ -20,35 +20,35 @@ main:
 	la $a0, CharStr 	# CahrStr is in $a0
 	la $a1, ResultArray	# Results is in $a1
 	jal char_occurrences	# calling the procedure
-	add $s0,$v0,$0		# save the returned hasccii val in $s1		
+	add $s0,$v0,$0		# save the returned hasccii val in $s1
 	add $s1,$v1,$0		# save the returned occurences value in $s0
 
 	# print the char and its occurrences num:
 	li $v0, 4       	# system call code for print_str
 	la $a0, task2_message1  # address of string to print
-	syscall			
+	syscall
 	li $v0, 11       	# system call code for print_char
 	add $a0,$s0,$0    	# $a0 has the hascii value of the letter
 	syscall
-	li $v0, 4       	
-	la $a0, task2_message2  
-	syscall			
+	li $v0, 4
+	la $a0, task2_message2
+	syscall
 	li $v0,1		# system call code for print_int
 	add $a0,$s1,$0 		# integer to print (number of occurrences) is in s0
-	syscall			
-	li $v0, 4       	
-	la $a0, task2_message3  
-	syscall	
-	
-	la $a1, ResultArray	
-	jal print_Char_by_occurrences 
+	syscall
+	li $v0, 4
+	la $a0, task2_message3
+	syscall
+
+	la $a1, ResultArray
+	jal print_Char_by_occurrences
 
 	la $a0,CharStr
 	add $a1,$s0,$0
 	jal delete
-	
+
 	add $t0,$a0,1		# address of CharStr[1] is in $t0
-	lbu $t1, 0($t0)		# $t1 = CharStr[1]	
+	lbu $t1, 0($t0)		# $t1 = CharStr[1]
 	beq $t1, $zero,exit 	# CharStr[1] == '\0' <=> only one char - at CharStr[0]
 	li $v0, 50       	# system call code for print_str
 	la $a0, repeat_quastion  # address of string to print
@@ -75,9 +75,9 @@ char_occurrences:
 	add $t5,$zero,$zero 	# initialize k - Results index to 0 (k is in $t5)
 	add $t9,$zero,$zero 	# initialize MAX occurences to 0 (MAX is in $t9)
 string_pass:
-	add $t1,$t0,$a0		# address of CharStr[i] is in $t1 
-	lbu $t2, 0($t1)		# $t2 = CharStr[i]	
-	beq $t2, $zero,result_pass # CharStr[i] == '\0' <=> end of CharStr	
+	add $t1,$t0,$a0		# address of CharStr[i] is in $t1
+	lbu $t2, 0($t1)		# $t2 = CharStr[i]
+	beq $t2, $zero,result_pass # CharStr[i] == '\0' <=> end of CharStr
 	add $t8, $t2, $0	#save CharStr[i] address in $t8 for later
 	addi $t2, $t2, -65	# t2 is now the hascii of value CharStr[i] - 65 -> the Char number in the ABC (A=0, Z=25)
 	add $t3, $a1, $t2	# adress of RsultArray[$t2] in $t3
@@ -87,14 +87,14 @@ string_pass:
 	addi $t0, $t0,1 	# i++ ($t0 = i)
 	bne $t8,$zero,string_pass 	#if CharStr[i] == 0, go to string_pass
 result_pass:
-	add  $t1,$a1,$t5	# address of ResultArray[k] in $t1 
-	lbu $t2,0($t1)		# load num in ResultArray[k] into $t2	
+	add  $t1,$a1,$t5	# address of ResultArray[k] in $t1
+	lbu $t2,0($t1)		# load num in ResultArray[k] into $t2
 	addi $t5, $t5,1 	# k++ ($t5 = k)
 	bgt $t9,$t2 after_update #  if ResultArray[k] < current MAX skip update
 	add $t9, $t2, $0	# MAX occurence updated in $t9
 	addi $t3, $t5, -1	# last index saved in $t3 (will be used to print the letter)
 after_update:
-	bne $t5,26,result_pass # not end of ResultArray -> move to next slot in ResultArray	
+	bne $t5,26,result_pass # not end of ResultArray -> move to next slot in ResultArray
 	add $v0,$t3,65    	# $v0 has the hascii value of the letter
 	add $v1,$t9,$0
 	lw $ra, 8($sp)
@@ -105,13 +105,13 @@ after_update:
 
 
 print_Char_by_occurrences:
-	addi $sp, $sp, -4 	
-	sw $a1, 0($sp)		
+	addi $sp, $sp, -4
+	sw $a1, 0($sp)
 	add $t5,$zero,$zero 	# i = Results index. initialize i to 0 (i is in $t5)
 	add $t6,$zero,$zero	# index for remainig prints in $t6
 print_line:
-	add  $t1,$a1,$t5	# address of ResultArray[i] in $t1 
-	lbu $t2,0($t1)		# load num in ResultArray[i] into $t2	
+	add  $t1,$a1,$t5	# address of ResultArray[i] in $t1
+	lbu $t2,0($t1)		# load num in ResultArray[i] into $t2
 	beq $t2,$0,next_line 	# $t2 != 0 <=> at least one occurence to print
 	li $v0, 11       	# system call code for print_char
 	addi $a0,$t5,65   	# $a0 has the hascii value of the letter
@@ -123,9 +123,9 @@ print_line:
 next_line:
 	addi $t5,$t5,1 		# i++ ($t5 = i)
 	add $t6,$zero,$zero	# reset index for remainig prints in $t6
-	blt $t5,26,print_line  # not end of ResultArray -> move to next slot in ResultArray	
-	lw $a1, 0($sp)		
-	addi $sp,$sp,4	
+	blt $t5,26,print_line  # not end of ResultArray -> move to next slot in ResultArray
+	lw $a1, 0($sp)
+	addi $sp,$sp,4
 	jr $ra
 
 
@@ -138,7 +138,7 @@ delete:
 	add $t5,$a0,$0		# save CharStr original adress
 delete_next:
 	add $a0,$t5,$t0		# address of CharStr[i] is in $a0
-	lbu $t1, 0($a0)		# $t1 = CharStr[i]	
+	lbu $t1, 0($a0)		# $t1 = CharStr[i]
 	bne $t1,$a1,after_reduction   # mathc -> go to reduction (address to delete on $a0)
 	addi $sp, $sp, -4 	# adjust stack for 2 item
 	sw $a0, 0($sp)		# save register $a0 for use afterwards
@@ -146,7 +146,7 @@ delete_next:
 	lw $a0, 0($sp)		# restore register a0 for caller
 	addiu $sp,$sp,4 		# adjust stack to delete 2 items
 after_reduction:
-	lbu $t2, 0($a0)		# $t2 = new CharStr[i]	
+	lbu $t2, 0($a0)		# $t2 = new CharStr[i]
 	beq $t2,$a1,skip_index_update
 	addiu $t0, $t0,1 	# i++ ($t0 = i)
 skip_index_update:
@@ -165,21 +165,3 @@ reduction:
 	add $t3, $t3,1		# t3 is now CarStr[i+2]
 	bne $t4, $zero,reduction # a stop conditin - moved the terminating '\0'
 	jr $ra
-	
-		
-	
-
-
-	
-
-
-
-
-	 
-
-
-	
-	
-	
-
-	
